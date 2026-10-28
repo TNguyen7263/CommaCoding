@@ -5,11 +5,11 @@ import { api } from '../api/backend';
 
 import * as Types from './types';
 import { resetPlayback, selectLoop } from '../timeline/playback';
-import {hasRoutesData } from '../timeline/segments';
+import { hasRoutesData } from '../timeline/segments';
 import { getDeviceFromState, deviceVersionAtLeast, deviceIsOnline } from '../utils';
 import { webrtcConnectionManager } from '../utils/webrtc';
 import { hardNavigate } from '../utils/navigation';
-
+import { centralUrlUnified } from "/src/url.js";
 let routesRequest = null;
 let routesRequestPromise = null;
 const LIMIT_INCREMENT = 5
@@ -71,7 +71,7 @@ export function checkRoutesData() {
         // TODO: these will all be relative times soon
         // fix segment boundary times for routes that have the wrong time at the start
         if ((Math.abs(r.start_time_utc_millis - startTime) > 24 * 60 * 60 * 1000)
-            && (Math.abs(r.end_time_utc_millis - endTime) < 10 * 1000)) {
+          && (Math.abs(r.end_time_utc_millis - endTime) < 10 * 1000)) {
           startTime = r.start_time_utc_millis;
           endTime = r.end_time_utc_millis;
           r.segment_start_times = r.segment_numbers.map((x) => startTime + (x * 60 * 1000));
@@ -125,7 +125,7 @@ export function checkLastRoutesData() {
       return
     }
 
-    console.log(`fetching ${limit +LIMIT_INCREMENT } routes`)
+    console.log(`fetching ${limit + LIMIT_INCREMENT} routes`)
     dispatch({
       type: Types.ACTION_UPDATE_ROUTE_LIMIT,
       limit: limit + LIMIT_INCREMENT,
@@ -143,19 +143,8 @@ export function checkLastRoutesData() {
 }
 
 export function urlForState(dongleId, log_id, start, end, prime) {
-  const path = [dongleId];
-
-  if (log_id) {
-    path.push(log_id);
-    if (start && end) {
-      path.push(start);
-      path.push(end);
-    }
-  } else if (prime) {
-    path.push('prime');
-  }
-
-  return `/${path.join('/')}`;
+  //temporary, will remove this function for cleanup
+  return centralUrlUnified(dongleId, log_id, start, end, prime);
 }
 
 function updateTimeline(state, dispatch, log_id, start, end, allowPathChange) {

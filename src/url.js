@@ -47,11 +47,28 @@ export function centralUrlParse(pathname) {
   return route;
 }
 
+export function centralUrlUnified(dongleId, log_id, start, end, prime) {
+  const path = [dongleId];
+
+  if (log_id) {
+    path.push(log_id);
+    if (start && end) {
+      path.push(start);
+      path.push(end);
+    }
+  } else if (prime) {
+    path.push('prime');
+  }
+
+  return `/${path.join('/')}`;
+}
+
 
 export function getDongleID(pathname) {
   const loc = centralUrlParse(pathname);
   return loc.dongleId;
 }
+
 
 export function getZoom(pathname) {
   let parts = pathname.split('/');
@@ -65,10 +82,12 @@ export function getZoom(pathname) {
   return null;
 }
 
+
 export function getRouteId(pathname) {
   const loc = centralUrlParse(pathname);
   return loc.routeId;
 }
+
 
 export function getRouteZoom(pathname) {
   const { routeId, start, end } = centralUrlParse(pathname);
@@ -78,10 +97,12 @@ export function getRouteZoom(pathname) {
     : null;
 }
 
+
 export function getPrimeNav(pathname) {
   const loc = centralUrlParse(pathname);
   return (loc.page === 'prime');
 }
+
 
 export function getStreamNav(pathname) {
   const loc = centralUrlParse(pathname);
